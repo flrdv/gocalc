@@ -2,8 +2,8 @@ package interpret
 
 import (
 	"errors"
-	"example.com/lex"
 	"fmt"
+	"github.com/floordiv/gocalc/lex"
 	"math"
 )
 

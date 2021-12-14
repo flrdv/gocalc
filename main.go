@@ -1,11 +1,11 @@
 package main
 
 import (
-	"example.com/interpret"
-	"example.com/lex"
-	"example.com/polishNotation"
-	"example.com/semantic"
 	"fmt"
+	"github.com/floordiv/gocalc/interpret"
+	"github.com/floordiv/gocalc/lex"
+	"github.com/floordiv/gocalc/polishNotation"
+	"github.com/floordiv/gocalc/semantic"
 )
 
 

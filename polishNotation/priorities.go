@@ -1,7 +1,7 @@
 package polishNotation
 
 import (
-	"example.com/lex"
+	"github.com/floordiv/gocalc/lex"
 )
 
 type TokenPriority int8
