@@ -22,11 +22,13 @@ func parseTokens(rawString string) []types.PrimaryToken {
 	}
 
 	for _, char := range rawString {
-		if string(char) == " " {
+		char := string(char)
+
+		if char == " " {
 			continue
 		}
 
-		if res, err := specialCharacters[string(char)]; err {
+		if res, err := specialCharacters[char]; err {
 			if len(currentToken.Value) > 0 {
 				if currentToken.Type == types.NoType {
 					currentToken.Type = getPrimaryTypeOfToken(operators, currentToken.Value)
@@ -37,33 +39,33 @@ func parseTokens(rawString string) []types.PrimaryToken {
 
 			lexemes = append(lexemes, types.PrimaryToken{
 				Type:  res,
-				Value: string(char),
+				Value: char,
 			})
 
 			continue
 		}
 
-		if currentToken.Type == types.Operator && !strings.Contains(operatorsChars, string(char)) {
+		if currentToken.Type == types.Operator && !strings.Contains(operatorsChars, char) {
 			lexemes = append(lexemes, currentToken)
 			currentToken = types.PrimaryToken{
 				Type:  types.NoType,
-				Value: string(char),
+				Value: char,
 			}
-		} else if strings.Contains(operatorsChars, string(char)) {
+		} else if strings.Contains(operatorsChars, char) {
 			if currentToken.Type == types.Operator {
-				currentToken.Value += string(char)
+				currentToken.Value += char
 			} else if currentToken.Type == types.NoType && len(currentToken.Value) == 0 {
 				currentToken.Type = types.Operator
-				currentToken.Value += string(char)
+				currentToken.Value += char
 			} else {
 				currentToken.Type = types.NotOperator
 				lexemes = append(lexemes, currentToken)
 				currentToken = types.PrimaryToken{
 					Type:  types.Operator,
-					Value: string(char),
+					Value: char,
 				}
 			}
-		} else if string(char) == " " {
+		} else if char == " " {
 			if len(currentToken.Value) != 0 {
 				lexemes = append(lexemes, currentToken)
 				currentToken = types.PrimaryToken{
@@ -76,7 +78,7 @@ func parseTokens(rawString string) []types.PrimaryToken {
 				currentToken.Type = types.NotOperator
 			}
 
-			currentToken.Value += string(char)
+			currentToken.Value += char
 		}
 	}
 
