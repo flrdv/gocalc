@@ -12,12 +12,13 @@ import (
 
 func calculate(expr string, printParsedNotation bool) interface{} {
 	parsedSemantic := semantic.Parse(lex.Parse(expr))
-	ast := polishNotation.ConvertToPolishNotation(parsedSemantic)
+	// Reversed Polish Notation - like ordinary, but postfix
+	rpn := polishNotation.ConvertToPolishNotation(parsedSemantic)
 
 	if printParsedNotation {
 		fmt.Print("reverse polish notation> ")
 
-		for _, token := range ast {
+		for _, token := range rpn {
 			tValue := token.Value
 
 			if token.Type == types.Operator {
@@ -40,7 +41,7 @@ func calculate(expr string, printParsedNotation bool) interface{} {
 		fmt.Println()
 	}
 
-	return interpret.Interpret(ast)
+	return interpret.Interpret(rpn)
 }
 
 func main() {
