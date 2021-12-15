@@ -6,6 +6,7 @@ import (
 	"github.com/floordiv/gocalc/lex"
 	"github.com/floordiv/gocalc/polishNotation"
 	"github.com/floordiv/gocalc/semantic"
+	"github.com/floordiv/gocalc/types"
 )
 
 
@@ -19,17 +20,17 @@ func calculate(expr string, printParsedNotation bool) interface{} {
 		for _, token := range ast {
 			tValue := token.Value
 
-			if token.Type == lex.Operator {
-				switch tValue.(lex.TokenType) {
-				case lex.OpAdd:
+			if token.Type == types.Operator {
+				switch tValue.(types.TokenType) {
+				case types.OpAdd:
 					tValue = "+"
-				case lex.OpMin:
+				case types.OpMin:
 					tValue = "-"
-				case lex.OpMul:
+				case types.OpMul:
 					tValue = "*"
-				case lex.OpDiv:
+				case types.OpDiv:
 					tValue = "/"
-				case lex.OpPow:
+				case types.OpPow:
 					tValue = "**"
 				}
 			}

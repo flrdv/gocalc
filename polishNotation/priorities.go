@@ -1,7 +1,7 @@
 package polishNotation
 
 import (
-	"github.com/floordiv/gocalc/lex"
+	"github.com/floordiv/gocalc/types"
 )
 
 type TokenPriority int8
@@ -13,15 +13,15 @@ const (
 )
 
 
-var OpsPriorities = map[lex.TokenType]TokenPriority {
-	lex.OpAdd: LowPriority,
-	lex.OpMin: LowPriority,
+var OpsPriorities = map[types.TokenType]TokenPriority {
+	types.OpAdd: LowPriority,
+	types.OpMin: LowPriority,
 
-	lex.OpMul: MediumPriority,
-	lex.OpDiv: MediumPriority,
-	lex.OpUnary: MediumPriority,
+	types.OpMul:   MediumPriority,
+	types.OpDiv:   MediumPriority,
+	types.OpUnary: MediumPriority,
 
-	lex.OpPow: HighPriority,
+	types.OpPow: HighPriority,
 
-	lex.InBraceExpr: MaxPriority,
+	types.InBraceExpr: MaxPriority,
 }

@@ -2,22 +2,23 @@ package lex
 
 import (
 	"fmt"
+	"github.com/floordiv/gocalc/types"
 	"strconv"
 	"strings"
 )
 
 
-func parseTokens(rawString string) []PrimaryToken {
-	var lexemes []PrimaryToken
-	currentToken := PrimaryToken{
-		Type: NoType,
+func parseTokens(rawString string) []types.PrimaryToken {
+	var lexemes []types.PrimaryToken
+	currentToken := types.PrimaryToken{
+		Type:  types.NoType,
 		Value: "",
 	}
 	operators := []string { "+", "-", "/", "*", "**" }
 	operatorsChars := strings.Join(operators, "")
-	specialCharacters := map[string]TokenType {
-		"(": Brace,
-		")": Brace,
+	specialCharacters := map[string]types.TokenType{
+		"(": types.Brace,
+		")": types.Brace,
 	}
 
 	for _, char := range rawString {
@@ -27,14 +28,14 @@ func parseTokens(rawString string) []PrimaryToken {
 
 		if res, err := specialCharacters[string(char)]; err {
 			if len(currentToken.Value) > 0 {
-				if currentToken.Type == NoType {
+				if currentToken.Type == types.NoType {
 					currentToken.Type = getPrimaryTypeOfToken(operators, currentToken.Value)
 				}
 
 				lexemes = append(lexemes, currentToken)
 			}
 
-			lexemes = append(lexemes, PrimaryToken{
+			lexemes = append(lexemes, types.PrimaryToken{
 				Type:  res,
 				Value: string(char),
 			})
@@ -42,37 +43,37 @@ func parseTokens(rawString string) []PrimaryToken {
 			continue
 		}
 
-		if currentToken.Type == Operator && !strings.Contains(operatorsChars, string(char)) {
+		if currentToken.Type == types.Operator && !strings.Contains(operatorsChars, string(char)) {
 			lexemes = append(lexemes, currentToken)
-			currentToken = PrimaryToken{
-				Type: NoType,
+			currentToken = types.PrimaryToken{
+				Type:  types.NoType,
 				Value: string(char),
 			}
 		} else if strings.Contains(operatorsChars, string(char)) {
-			if currentToken.Type == Operator {
+			if currentToken.Type == types.Operator {
 				currentToken.Value += string(char)
-			} else if currentToken.Type == NoType && len(currentToken.Value) == 0 {
-				currentToken.Type = Operator
+			} else if currentToken.Type == types.NoType && len(currentToken.Value) == 0 {
+				currentToken.Type = types.Operator
 				currentToken.Value += string(char)
 			} else {
-				currentToken.Type = NotOperator
+				currentToken.Type = types.NotOperator
 				lexemes = append(lexemes, currentToken)
-				currentToken = PrimaryToken{
-					Type: Operator,
+				currentToken = types.PrimaryToken{
+					Type:  types.Operator,
 					Value: string(char),
 				}
 			}
 		} else if string(char) == " " {
 			if len(currentToken.Value) != 0 {
 				lexemes = append(lexemes, currentToken)
-				currentToken = PrimaryToken{
-					Type: NoType,
+				currentToken = types.PrimaryToken{
+					Type:  types.NoType,
 					Value: "",
 				}
 			}
 		} else {
-			if currentToken.Type == NoType && len(currentToken.Value) > 0 {
-				currentToken.Type = NotOperator
+			if currentToken.Type == types.NoType && len(currentToken.Value) > 0 {
+				currentToken.Type = types.NotOperator
 			}
 
 			currentToken.Value += string(char)
@@ -81,13 +82,13 @@ func parseTokens(rawString string) []PrimaryToken {
 
 	for _, operator := range operators {
 		if currentToken.Value == operator {
-			currentToken.Type = Operator
+			currentToken.Type = types.Operator
 			break
 		}
 	}
 
-	if currentToken.Type != Operator {
-		currentToken.Type = NotOperator
+	if currentToken.Type != types.Operator {
+		currentToken.Type = types.NotOperator
 	}
 
 	lexemes = append(lexemes, currentToken)
@@ -95,49 +96,45 @@ func parseTokens(rawString string) []PrimaryToken {
 	return lexemes
 }
 
-func getPrimaryTypeOfToken(operators []string, value string) TokenType {
+func getPrimaryTypeOfToken(operators []string, value string) types.TokenType {
 	for _, elem := range operators {
 		if value == elem {
-			return Operator
+			return types.Operator
 		}
 	}
 
-	return NotOperator
+	return types.NotOperator
 }
 
-func getTypeOfToken(tokenType TokenType, tokenValue string) TokenType {
+func getTypeOfToken(tokenType types.TokenType, tokenValue string) types.TokenType {
 	switch tokenType {
-	case Operator:
+	case types.Operator:
 		switch tokenValue {
-		case "+": return OpAdd
-		case "-": return OpMin
-		case "/": return OpDiv
-		case "*": return OpMul
-		case "**": return OpPow
+		case "+": return types.OpAdd
+		case "-": return types.OpMin
+		case "/": return types.OpDiv
+		case "*": return types.OpMul
+		case "**": return types.OpPow
 		}
-	case NotOperator:
-		switch {
-		default:
-			return Float
-		}
-	case Brace:
+	case types.NotOperator: return types.Float
+	case types.Brace:
 		switch tokenValue {
-		case "(": return LBrace
-		case ")": return RBrace
+		case "(": return types.LBrace
+		case ")": return types.RBrace
 		}
 	}
 
-	return NoType
+	return types.NoType
 }
 
-func Parse(rawString string) []Token {
+func Parse(rawString string) []types.Token {
 	primaryTokens := parseTokens(rawString)
-	var outputTokens []Token
+	var outputTokens []types.Token
 
 	for _, token := range primaryTokens {
 		tokenType := getTypeOfToken(token.Type, token.Value)
 
-		if tokenType == NoType {
+		if tokenType == types.NoType {
 			panic(fmt.Sprintf("unrecognized token: %s\n", token.Value))
 		}
 
@@ -146,18 +143,18 @@ func Parse(rawString string) []Token {
 		// ignoring errors from parsing integers, floats, etc. only because
 		// I am already sure it's valid as validation is happening before this moment
 		switch tokenType {
-		case Float:
+		case types.Float:
 			parsedValue, _ = strconv.ParseFloat(token.Value, 64)
 		default:
 			parsedValue = tokenType
 		}
 
 		switch token.Type {
-		case Operator: tokenType = Operator
-		case Brace: tokenType = Brace
+		case types.Operator: tokenType = types.Operator
+		case types.Brace: tokenType = types.Brace
 		}
 
-		newToken := Token{
+		newToken := types.Token{
 			Type: tokenType,
 			Value: parsedValue,
 		}

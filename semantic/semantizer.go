@@ -3,11 +3,11 @@ package semantic
 import (
 	"errors"
 	"fmt"
-	"github.com/floordiv/gocalc/lex"
+	"github.com/floordiv/gocalc/types"
 )
 
 
-func getClosingBraceIndex(tokens []lex.Token) (int, error) {
+func getClosingBraceIndex(tokens []types.Token) (int, error) {
 	/*
 	Returns reference on index of closing brace, or error
 	 */
@@ -16,10 +16,10 @@ func getClosingBraceIndex(tokens []lex.Token) (int, error) {
 
 	for index, token := range tokens {
 		switch token.Type {
-		case lex.Brace:
-			switch token.Value.(lex.TokenType) {
-			case lex.LBrace: openedBraces++
-			case lex.RBrace: openedBraces--; if openedBraces == 0 { return index, nil }
+		case types.Brace:
+			switch token.Value.(types.TokenType) {
+			case types.LBrace: openedBraces++
+			case types.RBrace: openedBraces--; if openedBraces == 0 { return index, nil }
 			}
 		}
 	}
@@ -27,14 +27,14 @@ func getClosingBraceIndex(tokens []lex.Token) (int, error) {
 	return 0, errors.New("no closing brace found")
 }
 
-func Parse(tokens []lex.Token) []lex.Token {
+func Parse(tokens []types.Token) []types.Token {
 	/*
 	Currently the only thing this function does is just puts in-braces expressions
 	into the single token
 	 */
 
 	var skipIters int
-	var outputTokens []lex.Token
+	var outputTokens []types.Token
 
 	for index, token := range tokens {
 		if skipIters > 0 {
@@ -43,7 +43,7 @@ func Parse(tokens []lex.Token) []lex.Token {
 			continue
 		}
 
-		if token.Type == lex.Brace && token.Value.(lex.TokenType) == lex.LBrace {
+		if token.Type == types.Brace && token.Value.(types.TokenType) == types.LBrace {
 			// we found an in-brace expression, time to parse it
 			closingBraceIndex, err := getClosingBraceIndex(tokens[index:])
 
@@ -59,8 +59,8 @@ func Parse(tokens []lex.Token) []lex.Token {
 				}									// we need to inc as otherwise we'll touch prev token
 
 				inBracesExpr := Parse(tokens[begin:index + closingBraceIndex])
-				outputTokens = append(outputTokens, lex.Token{
-					Type: lex.InBraceExpr,
+				outputTokens = append(outputTokens, types.Token{
+					Type:  types.InBraceExpr,
 					Value: inBracesExpr,
 				})
 			}

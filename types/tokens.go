@@ -1,4 +1,4 @@
-package lex
+package types
 
 /*
 Primary token is a token that is used on first lexical parsing
@@ -7,7 +7,7 @@ step, it's value is a raw string
 Also it's type is only Operator, NotOperator, and NoType after init
 */
 type PrimaryToken struct {
-	Type TokenType
+	Type  TokenType
 	Value string
 }
 
@@ -17,12 +17,12 @@ primary token that it's value may have any type (bool, int, str,
 float, etc.)
 */
 type Token struct {
-	Type TokenType
+	Type  TokenType
 	Value interface{}
 }
 
 
 type BracesExpr struct {
-	Type TokenType
+	Type  TokenType
 	Value []Token
 }

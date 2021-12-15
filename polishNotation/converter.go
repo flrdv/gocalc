@@ -2,15 +2,15 @@ package polishNotation
 
 import (
 	"fmt"
-	"github.com/floordiv/gocalc/lex"
+	"github.com/floordiv/gocalc/types"
 )
 
 
-func countOps(tokens []lex.Token) uint {
+func countOps(tokens []types.Token) uint {
 	var opsCount uint
 
 	for _, token := range tokens {
-		if token.Type == lex.Operator {
+		if token.Type == types.Operator {
 			opsCount++
 		}
 	}
@@ -18,8 +18,8 @@ func countOps(tokens []lex.Token) uint {
 	return opsCount
 }
 
-func removeValues(arr []lex.Token, indexes... int) []lex.Token {
-	var arrWithNoValues []lex.Token
+func removeValues(arr []types.Token, indexes... int) []types.Token {
+	var arrWithNoValues []types.Token
 
 	for elementIndex, element := range arr {
 		var skip = false
@@ -41,7 +41,7 @@ func removeValues(arr []lex.Token, indexes... int) []lex.Token {
 	return arrWithNoValues
 }
 
-func pickMostPriorityOp(tokens []lex.Token) (opIndex int) {
+func pickMostPriorityOp(tokens []types.Token) (opIndex int) {
 	var mostPriorityOp int
 	var mostPriority = LowPriority - 1
 
@@ -49,8 +49,8 @@ func pickMostPriorityOp(tokens []lex.Token) (opIndex int) {
 		// a bit unoptimized, as I need only each second value
 		// but nobody cares, this operation isn't in interpreting
 		// runtime, and go is fast enough
-		if token.Type == lex.Operator {
-			priority, found := OpsPriorities[token.Value.(lex.TokenType)]
+		if token.Type == types.Operator {
+			priority, found := OpsPriorities[token.Value.(types.TokenType)]
 
 			if !found {
 				panic(fmt.Errorf("unknown operator: %s", token.Value))
@@ -60,7 +60,7 @@ func pickMostPriorityOp(tokens []lex.Token) (opIndex int) {
 				mostPriorityOp = index
 				mostPriority = priority
 			}
-		} else if token.Type == lex.InBraceExpr {
+		} else if token.Type == types.InBraceExpr {
 			return index
 		}
 	}
@@ -68,13 +68,13 @@ func pickMostPriorityOp(tokens []lex.Token) (opIndex int) {
 	return mostPriorityOp
 }
 
-func ConvertToPolishNotation(tokens []lex.Token) []lex.Token {
+func ConvertToPolishNotation(tokens []types.Token) []types.Token {
 	if len(tokens) == 0 || len(tokens) == 1 {
 		return tokens
 	}
 
 	var tokensQueue = tokens[:]
-	var polishNotatedTokens []lex.Token
+	var polishNotatedTokens []types.Token
 	var opsCount = countOps(tokens)
 
 	for i := uint(0); i <= opsCount; i++ {
@@ -85,8 +85,8 @@ func ConvertToPolishNotation(tokens []lex.Token) []lex.Token {
 		opIndex := pickMostPriorityOp(tokensQueue)
 		op := tokensQueue[opIndex]
 
-		if op.Type == lex.InBraceExpr {
-			polishNotatedTokens = append(polishNotatedTokens, ConvertToPolishNotation(op.Value.([]lex.Token))...)
+		if op.Type == types.InBraceExpr {
+			polishNotatedTokens = append(polishNotatedTokens, ConvertToPolishNotation(op.Value.([]types.Token))...)
 
 			if opIndex > 0 {
 				beforeBracesTokens, beforeBracesOp := tokensQueue[:opIndex-1], tokensQueue[opIndex-1]
