@@ -39,7 +39,7 @@ func Interpret(tokens []types.Token) interface{} {
 
 			valuesStackLen := len(valuesStack)
 			right, left := valuesStack[valuesStackLen-1], valuesStack[valuesStackLen-2]
-			opResult, err := doOperation(token.Value.(types.TokenType), right, left)
+			opResult, err := doOperation(token.Value.(types.TokenType), left, right)
 
 			if err != nil {
 				panic(err)
