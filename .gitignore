@@ -19,6 +19,7 @@ go.work
 
 # IDE files
 .idea/
+.idea/.gitignore
 
 # Strange file I don't now who he is but he always appears in my projects
 .DS_Store
