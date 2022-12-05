@@ -28,8 +28,7 @@ func (t *tokenizer) Next() (LexemeType, Lexeme, error) {
 	}
 
 	t.trimSpaces()
-	lexemeType := letter(t.input[0]).Type()
-	switch lexemeType {
+	switch lexemeType := letter(t.input[0]).Type(); lexemeType {
 	case String:
 		lexeme, err := t.parseString()
 		return String, lexeme, err
